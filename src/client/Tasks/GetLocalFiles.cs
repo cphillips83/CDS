@@ -95,13 +95,9 @@ namespace CDS.Tasks
         {
             if (Globals.ActiveConsole)
             {
-                var index = 0;
-                var symbols = new string[] { "-", "\\", "|", "/" };
                 while (!base.Wait(Globals.ConsoleUpdateDelay))
                 {
-                    //var percent = (int)((_directoriesProcessed / (float)_directoryProducer.TotalDirectories) * 100);
                     var percent = (_directoriesProcessed / (float)_directoryProducer.TotalDirectories);
-                    index = (index + 1) % symbols.Length;
 
                     Console.CursorLeft = 0;
                     Console.Write($"Discovering {_totalFiles} files [{ProgressBar(percent)}] {(int)(percent * 100)}%");
@@ -109,7 +105,6 @@ namespace CDS.Tasks
 
                 {
                     var percent = (_directoriesProcessed / (float)_directoryProducer.TotalDirectories);
-                    index = (index + 1) % symbols.Length;
 
                     Console.CursorLeft = 0;
                     Console.WriteLine($"Discovered {_totalFiles} files [{ProgressBar(percent)}] {(int)(percent * 100)}%");

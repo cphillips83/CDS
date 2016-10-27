@@ -87,11 +87,8 @@ namespace CDS.Tasks
         {
             if (Globals.ActiveConsole)
             {
-                var index = 0;
-                var symbols = new string[] { "-", "\\", "|", "/" };
                 while (!base.Wait(Globals.ConsoleUpdateDelay))
                 {
-                    index = (index + 1) % symbols.Length;
                     Console.CursorLeft = 0;
                     Console.Write($"Discovering {TotalDirectories} directories...");
                 }
