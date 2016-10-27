@@ -8,13 +8,15 @@ namespace CDS.FileSystem
 {
     public class DirectoryEntry
     {
+        public readonly string Hash;
         public readonly string Path;
         public readonly string Name;
         public readonly Dictionary<string, FileEntry> Files = new Dictionary<string, FileEntry>();
         public readonly Dictionary<string, DirectoryEntry> Directories = new Dictionary<string, DirectoryEntry>();
 
-        public DirectoryEntry(string path)
+        public DirectoryEntry(string hash, string path)
         {
+            Hash = hash;
             Path = path;
             Name = System.IO.Path.GetFileName(path);
         }
@@ -23,14 +25,14 @@ namespace CDS.FileSystem
         {
             foreach (var fe in entries)
                 if (fe != null)
-                    Files.Add(fe.Hash, fe);
+                    Files.Add(fe.NameHash, fe);
         }
 
         public void AddDirectories(DirectoryEntry[] entries)
         {
             foreach (var de in entries)
                 if (de != null)
-                    Directories.Add(de.Name, de);
+                    Directories.Add(de.Hash, de);
         }
 
         public static ChangeType Compare(DirectoryEntry left, DirectoryEntry right)

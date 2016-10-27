@@ -6,22 +6,19 @@ using System.Threading.Tasks;
 
 namespace CDS.FileSystem
 {
-    public class Dummy
-    {
-
-    }
-
     public class FileEntry
     {
-        public readonly string Hash;
+        public readonly string NameHash;
+        public readonly string DataHash;
         public readonly string Name;
         public readonly string Path;
 
-        public FileEntry(string hash, string path)
+        public FileEntry(string nameHash, string dataHash, string path)
         {
+            this.NameHash = nameHash;
+            this.DataHash = dataHash;
             this.Path = path;
             this.Name = System.IO.Path.GetFileName(path);
-            this.Hash = hash;
         }
 
         public static ChangeType Compare(FileEntry left, FileEntry right)
@@ -30,7 +27,7 @@ namespace CDS.FileSystem
                 return ChangeType.Create;
             else if (left != null && right == null)
                 return ChangeType.Delete;
-            else if (left.Hash != right.Hash)
+            else if (left.DataHash != right.DataHash)
                 return ChangeType.Replace;
 
             return ChangeType.OK;
@@ -38,7 +35,7 @@ namespace CDS.FileSystem
 
         public override string ToString()
         {
-            return $"{{ Hash: {Hash}, Name: {Name}, Path: {Path} }}";
+            return $"{{ NameHash: {NameHash}, DataHash: {DataHash}, Name: {Name}, Path: {Path} }}";
         }
 
         //public string ObjectFolder { get { return System.IO.Path.Combine(Config.ObjectPath, Hash.Substring(0, 2)); } }

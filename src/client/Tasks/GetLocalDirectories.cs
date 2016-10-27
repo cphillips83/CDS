@@ -14,14 +14,21 @@ namespace CDS.Tasks
         //public virtual bool IsCompleted { get; protected set; }
         protected Task _task;
 
-        public Task Process()
+        public Task ProcessAsync()
         {
             _task = Task.Run(new Action(Execute));
             return _task;
         }
 
+        public void Process()
+        {
+            Execute();
+        }
+
         public virtual bool Wait(int ms = -1)
         {
+            if (_task == null)
+                return true;
             return _task.Wait(ms);
         }
 
@@ -40,7 +47,7 @@ namespace CDS.Tasks
         public GetLocalDirectories(string basePath)
         {
             BasePath = basePath;
-            Root = new DirectoryEntry(basePath);
+            Root = new DirectoryEntry(FileHasher.NonThreadSafe.ComputeFilenameHash(null), string.Empty);
         }
 
         protected override void Execute()
@@ -67,7 +74,7 @@ namespace CDS.Tasks
                         if (Errors.ReachedMaxErrors)
                             break;
 
-                        dirEntries[i] = new DirectoryEntry(dirs[i]);
+                        dirEntries[i] = new DirectoryEntry(FileHasher.NonThreadSafe.ComputeFilenameHash(dirs[i]), dirs[i]);
                         if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
                             dirsToProcess.Push(dirEntries[i]);
                     }

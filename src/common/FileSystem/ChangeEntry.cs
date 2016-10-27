@@ -5,12 +5,12 @@ namespace CDS.FileSystem
     public class ChangeEntry
     {
         public readonly ChangeType Type;
-        public readonly string Path;
+        public readonly string Hash;
         public readonly bool IsDirectory;
 
-        public ChangeEntry(string path, ChangeType type, bool isDirectory)
+        public ChangeEntry(string hash, ChangeType type, bool isDirectory)
         {
-            Path = path;
+            Hash = hash;
             Type = type;
             IsDirectory = isDirectory;
         }

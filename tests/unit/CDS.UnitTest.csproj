@@ -62,6 +62,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ChangeSetTests.cs" />
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="LibraryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

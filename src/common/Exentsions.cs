@@ -50,5 +50,15 @@ namespace CDS
             }
         }
         #endregion
+
+        public static T SafeGet<K, T>(this Dictionary<K, T> dict, K key)
+        {
+            T t;
+            if (!dict.TryGetValue(key, out t))
+                return default(T);
+
+            return t;
+        }
+
     }
 }

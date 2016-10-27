@@ -48,6 +48,7 @@
     <Compile Include="FileSystem\DirectoryEntry.cs" />
     <Compile Include="FileSystem\FileEntry.cs" />
     <Compile Include="FileSystem\IFileSystem.cs" />
+    <Compile Include="FileSystem\MergedEntry.cs" />
     <Compile Include="FileSystem\PhysicalFileSystem.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

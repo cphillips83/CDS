@@ -50,8 +50,9 @@ namespace CDS.Tasks
                             {
                                 using (var s = File.OpenRead(files[i]))
                                 {
-                                    var hash = hasher.ComputeHash(files[i], s);
-                                    var fe = new FileEntry(hash, files[i]);
+                                    var nameHash = hasher.ComputeFilenameHash(files[i]);
+                                    var dataHash = hasher.ComputeFiledataHash(s);
+                                    var fe = new FileEntry(nameHash, dataHash, files[i]);
                                     fileEntries[i] = fe;
                                 }
                             }

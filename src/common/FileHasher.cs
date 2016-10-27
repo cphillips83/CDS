@@ -10,6 +10,7 @@ namespace CDS
 {
     public class FileHasher
     {
+        public readonly static FileHasher NonThreadSafe = new FileHasher();
         private class FileHasherInternal : SHA1Managed
         {
             public async Task<byte[]> ComputeHashAsync(Stream inputStream)
@@ -34,22 +35,40 @@ namespace CDS
 
         private FileHasherInternal _hashAlgorithm = new FileHasherInternal();
 
-        public string ComputeHash(string fileName, Stream inputStream)
+        public string ComputeFilenameHash(string dirName)
         {
-            var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(fileName);
-            var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
-            var fileData = _hashAlgorithm.ComputeHash(inputStream);
+            if (string.IsNullOrEmpty(dirName))
+                return new string('0', 32);
 
-            return BytesToHex(fileHash, fileData);
+            var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(dirName.ToLower());
+            var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
+
+            return BytesToHex(fileHash);
         }
 
-        public async Task<string> ComputeHashAsync(string fileName, Stream inputStream)
+        public string ComputeFiledataHash(Stream inputStream)
         {
-            var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(fileName);
-            var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
-            var fileData = await _hashAlgorithm.ComputeHashAsync(inputStream);
+            var fileData = _hashAlgorithm.ComputeHash(inputStream);
 
-            return BytesToHex(fileHash, fileData);
+            return BytesToHex(fileData);
+        }
+
+        //public async Task<string> ComputeHashAsync(string fileName, Stream inputStream)
+        //{
+        //    var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(fileName);
+        //    var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
+        //    var fileData = await _hashAlgorithm.ComputeHashAsync(inputStream);
+
+        //    return BytesToHex(fileHash, fileData);
+        //}
+
+        private static string BytesToHex(byte[] file)
+        {
+            var sb = new StringBuilder(file.Length * 2);
+            for (var i = 0; i < file.Length; i++)
+                sb.AppendFormat("{0:X2}", file[i]);
+
+            return sb.ToString();
         }
 
         private static string BytesToHex(byte[] file, byte[] data)

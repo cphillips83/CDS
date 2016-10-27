@@ -20,8 +20,8 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareFile_OK()
         {
-            var left = new FileEntry("04818562074444716185293154509581", @"C:\path\file.txt");
-            var right = new FileEntry("04818562074444716185293154509581", @"C:\path\file.txt");
+            var left = new FileEntry("04818562074444716185293154509581", "04818562074444716185293154509581", @"C:\path\file.txt");
+            var right = new FileEntry("04818562074444716185293154509581", "04818562074444716185293154509581", @"C:\path\file.txt");
 
             var result = FileEntry.Compare(left, right);
 
@@ -31,8 +31,8 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareFile_Replace()
         {
-            var left = new FileEntry("04818562074444716185293154509581", @"C:\path\file.txt");
-            var right = new FileEntry("12374828797858048973219621096805", @"C:\path\file.txt");
+            var left = new FileEntry("04818562074444716185293154509581", "04818562074444716185293154509581", @"C:\path\file.txt");
+            var right = new FileEntry("12374828797858048973219621096805", "12374828797858048973219621096805", @"C:\path\file.txt");
 
             var result = FileEntry.Compare(left, right);
 
@@ -42,7 +42,7 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareFile_Create()
         {
-            var right = new FileEntry("04818562074444716185293154509581", @"C:\path\file.txt");
+            var right = new FileEntry("04818562074444716185293154509581", "04818562074444716185293154509581", @"C:\path\file.txt");
 
             var result = FileEntry.Compare(null, right);
 
@@ -52,7 +52,7 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareFile_Delete()
         {
-            var left = new FileEntry("04818562074444716185293154509581", @"C:\path\file.txt");
+            var left = new FileEntry("04818562074444716185293154509581", "04818562074444716185293154509581", @"C:\path\file.txt");
 
             var result = FileEntry.Compare(left, null);
 
@@ -60,10 +60,21 @@ namespace unit
         }
 
         [TestMethod]
+        public void FileSystem_CompareRootDir_OK()
+        {
+            var left = new DirectoryEntry(new string('0', 32), string.Empty);
+            var right = new DirectoryEntry(new string('0', 32), string.Empty);
+
+            var result = DirectoryEntry.Compare(left, right);
+
+            Assert.AreEqual(ChangeType.OK, result);
+        }
+
+        [TestMethod]
         public void FileSystem_CompareDir_OK()
         {
-            var left = new DirectoryEntry(@"C:\path");
-            var right = new DirectoryEntry(@"C:\path");
+            var left = new DirectoryEntry(new string('0', 32), "subdir");
+            var right = new DirectoryEntry(new string('0', 32), "subdir");
 
             var result = DirectoryEntry.Compare(left, right);
 
@@ -73,7 +84,7 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareDir_Delete()
         {
-            var left = new DirectoryEntry(@"C:\path");
+            var left = new DirectoryEntry(new string('0', 32), "subdir");
 
             var result = DirectoryEntry.Compare(left, null);
 
@@ -83,7 +94,7 @@ namespace unit
         [TestMethod]
         public void FileSystem_CompareDir_Create()
         {
-            var right = new DirectoryEntry(@"C:\path");
+            var right = new DirectoryEntry(new string('0', 32), "subdir");
 
             var result = DirectoryEntry.Compare(null, right);
 
