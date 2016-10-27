@@ -22,13 +22,15 @@ namespace CDS.FileSystem
         public void AddFiles(FileEntry[] entries)
         {
             foreach (var fe in entries)
-                Files.Add(fe.Hash, fe);
+                if (fe != null)
+                    Files.Add(fe.Hash, fe);
         }
-        
+
         public void AddDirectories(DirectoryEntry[] entries)
         {
-            foreach (var fe in entries)
-                Directories.Add(fe.Name, fe);
+            foreach (var de in entries)
+                if (de != null)
+                    Directories.Add(de.Name, de);
         }
 
         public static ChangeType Compare(DirectoryEntry left, DirectoryEntry right)

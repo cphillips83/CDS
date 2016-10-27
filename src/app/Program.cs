@@ -25,7 +25,7 @@ namespace CDS
 
         static void Main()
         {
-            var stage = new StageFilesForCommit(@"C:\inetpub\AMPProjects");
+            var stage = new StageFilesForCommit(@"C:\inetpub\wwwroot\amp");
             stage.Process().Wait();
             //var pfs = new PhysicalFileSystem(@"C:\inetpub\AMPProjects");
             //pfs.Load();

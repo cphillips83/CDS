@@ -31,6 +31,12 @@ namespace CDS.Tasks
             b.Wait();
             //c.Wait();
 
+            if (Errors.HasErrors)
+            {
+                Errors.WriteErrors();
+                return;
+            }
+
             //now we need to get the current manifest
             //and compare to what we have
             var d = new CalculateDiff(a.Root, a.Root); //change 2nd a to c

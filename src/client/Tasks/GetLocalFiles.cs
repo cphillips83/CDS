@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CDS.FileSystem;
+using System.Security;
 
 namespace CDS.Tasks
 {
@@ -29,28 +30,52 @@ namespace CDS.Tasks
         {
             Parallel.ForEach(_directoryProducer.Directories.GetConsumingPartitioner(), d =>
             {
-                var files = Directory.GetFiles(d.Path);
-                if (files.Length > 0)
+                if (Errors.ReachedMaxErrors)
+                    return;
+
+                try
                 {
-                    var hasher = new FileHasher();
-
-                    var fileEntries = new FileEntry[files.Length];
-                    for (int i = 0; i < files.Length; i++)
+                    var files = Directory.GetFiles(d.Path);
+                    if (files.Length > 0)
                     {
-                        using (var s = File.OpenRead(files[i]))
+                        var hasher = new FileHasher();
+
+                        var fileEntries = new FileEntry[files.Length];
+                        for (int i = 0; i < files.Length; i++)
                         {
-                            var hash = hasher.ComputeHash(files[i], s);
-                            var fe = new FileEntry(hash, files[i]);
-                            fileEntries[i] = fe;
+                            if (Errors.ReachedMaxErrors)
+                                return;
+
+                            try
+                            {
+                                using (var s = File.OpenRead(files[i]))
+                                {
+                                    var hash = hasher.ComputeHash(files[i], s);
+                                    var fe = new FileEntry(hash, files[i]);
+                                    fileEntries[i] = fe;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Errors.Add(ex);
+                            }
+                            //catch (FileNotFoundException) { }
+                            //catch (IOException) { }
+                            //catch (UnauthorizedAccessException) { }
+                            //catch (SecurityException) { }
+                            //System.Threading.Thread.Sleep(25);
                         }
-                        //System.Threading.Thread.Sleep(25);
+
+                        d.AddFiles(fileEntries);
+
+                        Interlocked.Add(ref _totalFiles, files.Length);
                     }
-
-                    d.AddFiles(fileEntries);
-
-                    Interlocked.Add(ref _totalFiles, files.Length);
+                    Interlocked.Increment(ref _directoriesProcessed);
                 }
-                Interlocked.Increment(ref _directoriesProcessed);
+                catch (Exception ex)
+                {
+                    Errors.Add(ex);
+                }
             });
         }
 

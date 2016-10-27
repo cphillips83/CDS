@@ -50,20 +50,33 @@ namespace CDS.Tasks
 
             while (dirsToProcess.Count > 0)
             {
+                if (Errors.ReachedMaxErrors)
+                    break;
+
                 _dirCount++;
 
                 var de = dirsToProcess.Pop();
                 Directories.Add(de);
 
-                var dirs = Directory.GetDirectories(de.Path);
-                var dirEntries = new DirectoryEntry[dirs.Length];
-                for (int i = 0; i < dirs.Length; i++)
+                try
                 {
-                    dirEntries[i] = new DirectoryEntry(dirs[i]);
-                    if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
-                        dirsToProcess.Push(dirEntries[i]);
+                    var dirs = Directory.GetDirectories(de.Path);
+                    var dirEntries = new DirectoryEntry[dirs.Length];
+                    for (int i = 0; i < dirs.Length; i++)
+                    {
+                        if (Errors.ReachedMaxErrors)
+                            break;
+
+                        dirEntries[i] = new DirectoryEntry(dirs[i]);
+                        if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
+                            dirsToProcess.Push(dirEntries[i]);
+                    }
+                    de.AddDirectories(dirEntries);
                 }
-                de.AddDirectories(dirEntries);
+                catch (Exception ex)
+                {
+                    Errors.Add(ex);
+                }
                 //System.Threading.Thread.Sleep(1);
             }
 
@@ -87,7 +100,7 @@ namespace CDS.Tasks
             }
 
             var result = base.Wait(ms);
-            if(result)
+            if (result)
                 Console.WriteLine($"Discovered {TotalDirectories} directories...  ");
             return result;
         }

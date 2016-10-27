@@ -23,7 +23,6 @@ namespace CDS
 
         static EmbeddedAssembly()
         {
-            Console.WriteLine($"Init resolver");
             InitializeResolver();
         }
 
@@ -31,11 +30,10 @@ namespace CDS
         {
             if (!_initialized)
             {
-                Console.WriteLine($"Init resolver");
                 AppDomain.CurrentDomain.AssemblyResolve += (x, y) =>
                 {
                     var asmName = new AssemblyName(y.Name);
-                    Console.WriteLine($"Resolving [{asmName.Name}]");
+                    //Console.WriteLine($"Resolving [{asmName.Name}]");
                     Func<Assembly> loader;
                     if (!_assemblies.TryGetValue(asmName.Name, out loader))
                     {
@@ -43,7 +41,7 @@ namespace CDS
                         return null;
                     }
 
-                        Console.WriteLine($"Resolved [{asmName.Name}]");
+                    //Console.WriteLine($"Resolved [{asmName.Name}]");
                     return loader();
                 };
                 _initialized = true;
