@@ -46,17 +46,23 @@ namespace CDS.FileSystem
             return ChangeType.OK;
         }
 
-        public static bool FindChanges(DirectoryEntry left, DirectoryEntry right, BlockingCollection<ChangeEntry> changes)
+        public static bool FindChanges(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback)
         {
             var result = false;
-            CompareDirectories(left, right, changes, ref result);
+            CompareDirectories(left, right, callback, ref result);
+            return result;
+        }
+
+        public static bool FindChanges(DirectoryEntry left, DirectoryEntry right, BlockingCollection<ChangeEntry> changes)
+        {
+            var result = FindChanges(left, right, x => changes.Add(x));
             changes.CompleteAdding();
             return result;
         }
 
-        private static void CompareDirectories(DirectoryEntry left, DirectoryEntry right, BlockingCollection<ChangeEntry> changes, ref bool result)
+        private static void CompareDirectories(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback, ref bool result)
         {
-            CompareFiles(left, right, changes, ref result);
+            CompareFiles(left, right, callback, ref result);
 
             var lefthash = left != null ? new HashSet<string>(left.Directories.Keys) : new HashSet<string>();
             var righthash = right != null ? new HashSet<string>(right.Directories.Keys) : new HashSet<string>();
@@ -72,16 +78,16 @@ namespace CDS.FileSystem
                 var r = DirectoryEntry.Compare(sdleft, sdright);
                 if (r != ChangeType.OK)
                 {
-                    changes.Add(new ChangeEntry(dir, r, true));
+                    callback(new ChangeEntry(dir, r, true));
                     result = true;
                 }
 
                 if (r != ChangeType.Delete)
-                    CompareDirectories(sdleft, sdright, changes, ref result);
+                    CompareDirectories(sdleft, sdright, callback, ref result);
             }
         }
 
-        private static void CompareFiles(DirectoryEntry left, DirectoryEntry right, BlockingCollection<ChangeEntry> changes, ref bool result)
+        private static void CompareFiles(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback, ref bool result)
         {
             var hash = new HashSet<string>();
 
@@ -105,7 +111,7 @@ namespace CDS.FileSystem
 
                 if (r != ChangeType.OK)
                 {
-                    changes.Add(new ChangeEntry(file, r, false));
+                    callback(new ChangeEntry(file, r, false));
                     result = true;
                 }
             }

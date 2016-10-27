@@ -1,88 +1,67 @@
-﻿using System;
+﻿using CDS.FileSystem;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CDS.FileSystem;
-using System.Collections.Concurrent;
 
 namespace CDS.Tasks
 {
     public class GetChangeSet : Task2
     {
-        private DirectoryEntry _left, _right;
+        private List<ChangeEntry> _localChangeSet = new List<ChangeEntry>();
+        //private List<ChangeEntry> _localChangeSet2 = new List<ChangeEntry>();
 
         public readonly BlockingCollection<ChangeEntry> Changes = new BlockingCollection<ChangeEntry>();
+        public readonly DirectoryEntry Left;
+        public readonly DirectoryEntry Right;
+        public bool FoundChanges { get; private set; } = false;
+
 
         public GetChangeSet(DirectoryEntry left, DirectoryEntry right)
         {
-            _left = left;
-            _right = right;
+            Left = left;
+            Right = right;
         }
 
         protected override void Execute()
         {
-            //request commit lock (return some sort of GUID with 2 timed lock)
+            FoundChanges = DirectoryEntry.FindChanges(Left, Right, x =>
+            {
+                Changes.Add(x);
+                lock (_localChangeSet)
+                    _localChangeSet.Add(x);
 
-            //compute changes using blockingcollection
-            CompareDirectories(_left, _right);
-
-            //send files as we get them (send GUID to refresh commit lock timer)
-
-            //send commit complete (send guid to notice that we are done)
-
-
+            });
         }
 
-        private void CompareDirectories(DirectoryEntry left, DirectoryEntry right)
+        private void WriteChanges()
         {
-            CompareFiles(left, right);
-
-            var lefthash = left != null ?  new HashSet<string>(left.Directories.Keys) : new HashSet<string>();
-            var righthash = right != null ?  new HashSet<string>(right.Directories.Keys) : new HashSet<string>();
-            var bothhash = new HashSet<string>(lefthash);
-            foreach (var key in righthash)
-                bothhash.Add(key);
-
-            foreach (var dir in bothhash)
+            ChangeEntry[] entries = null;
+            lock (_localChangeSet)
             {
-                var sdleft = left != null ? left.Directories.SafeGet(dir) : null;
-                var sdright = right != null ? right.Directories.SafeGet(dir) : null;
+                if (_localChangeSet.Count > 0)
+                {
+                    entries = _localChangeSet.ToArray();
+                    _localChangeSet.Clear();
+                }
+            }
 
-                var result = DirectoryEntry.Compare(sdleft, sdright);
-                if (result != ChangeType.OK)
-                    Changes.Add(new ChangeEntry(dir, result, true));
-
-                if (result != ChangeType.Delete)
-                    CompareDirectories(sdleft, sdright);
+            if (entries != null)
+            {
+                foreach (var cs in entries)
+                    Console.WriteLine(cs.GetChangeLog());
             }
         }
 
-        private void CompareFiles(DirectoryEntry left, DirectoryEntry right)
+        public override bool Wait(int ms = -1)
         {
-            var hash = new HashSet<string>();
+            while (!base.Wait(Globals.ConsoleUpdateDelay))
+                WriteChanges();
 
-            if (left != null)
-            {
-                foreach (var fe in left.Files.Keys)
-                    hash.Add(fe);
-            }
-
-            if (right != null)
-            {
-                foreach (var fe in right.Files.Keys)
-                    hash.Add(fe);
-            }
-
-            foreach (var file in hash)
-            {
-                var fileleft = left != null ? left.Files.SafeGet(file) : null;
-                var fileright = right != null ? right.Files.SafeGet(file) : null;
-                var result = FileEntry.Compare(fileleft, fileright);
-
-                if (result != ChangeType.OK)
-                    Changes.Add(new ChangeEntry(file, result, false));
-            }
+            WriteChanges();
+            return true;
         }
     }
 }

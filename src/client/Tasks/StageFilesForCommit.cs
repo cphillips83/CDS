@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CDS.FileSystem;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,8 +41,8 @@ namespace CDS.Tasks
 
             //now we need to get the current manifest
             //and compare to what we have
-            var d = new GetChangeSet(a.Root, a.Root); //change 2nd a to c
-            d.ProcessAsync();
+            var d = new GetChangeSet(null, a.Root); //change 2nd a to c
+            d.Process();
             d.Wait();
 
             sw.Stop();

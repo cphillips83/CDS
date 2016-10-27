@@ -47,6 +47,10 @@ namespace CDS.Tasks
         public GetLocalDirectories(string basePath)
         {
             BasePath = basePath;
+
+            if (!BasePath.EndsWith("\\"))
+                BasePath += "\\";
+
             Root = new DirectoryEntry(SimpleSHA1.NonThreadSafe.Hash((string)null), string.Empty);
         }
 
@@ -67,14 +71,18 @@ namespace CDS.Tasks
 
                 try
                 {
-                    var dirs = Directory.GetDirectories(de.Path);
+                    var fullPath = Path.Combine(BasePath, de.Path);
+                    var dirs = Directory.GetDirectories(fullPath);
                     var dirEntries = new DirectoryEntry[dirs.Length];
                     for (int i = 0; i < dirs.Length; i++)
                     {
                         if (Errors.ReachedMaxErrors)
                             break;
 
-                        dirEntries[i] = new DirectoryEntry(SimpleSHA1.NonThreadSafe.Hash(dirs[i]), dirs[i]);
+
+                        var relativePath = dirs[i].Substring(BasePath.Length);
+                        var filenameHash = SimpleSHA1.NonThreadSafe.Hash(relativePath);
+                        dirEntries[i] = new DirectoryEntry(filenameHash, relativePath);
                         if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
                             dirsToProcess.Push(dirEntries[i]);
                     }

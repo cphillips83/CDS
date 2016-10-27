@@ -35,7 +35,8 @@ namespace CDS.Tasks
 
                 try
                 {
-                    var files = Directory.GetFiles(d.Path);
+                    var fullPath = Path.Combine(_directoryProducer.BasePath, d.Path);
+                    var files = Directory.GetFiles(fullPath);
                     if (files.Length > 0)
                     {
                         var hasher = new SimpleSHA1();
@@ -48,11 +49,12 @@ namespace CDS.Tasks
 
                             try
                             {
+                                var relativePath = files[i].Substring(_directoryProducer.BasePath.Length);
                                 using (var s = File.OpenRead(files[i]))
                                 {
-                                    var nameHash = hasher.Hash(files[i]);
+                                    var nameHash = hasher.Hash(relativePath);
                                     var dataHash = hasher.Hash(s);
-                                    var fe = new FileEntry(nameHash, dataHash, files[i]);
+                                    var fe = new FileEntry(nameHash, dataHash, relativePath);
                                     fileEntries[i] = fe;
                                 }
                             }

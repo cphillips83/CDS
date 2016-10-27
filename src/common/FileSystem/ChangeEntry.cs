@@ -15,22 +15,22 @@ namespace CDS.FileSystem
             IsDirectory = isDirectory;
         }
 
-        //public string GetChangeLog()
-        //{
-        //    if (IsDirectory)
-        //    {
-        //        if (Type == ChangeType.Create) return $"dc {Path}";
-        //        else if (Type == ChangeType.Delete) return $"dd {Path}";
-        //    }
-        //    else
-        //    {
-        //        if (Type == ChangeType.Create) return $"fc {Path}";
-        //        if (Type == ChangeType.Delete) return $"fd {Path}";
-        //        if (Type == ChangeType.Replace) return $"fr {Path}";
-        //    }
+        public string GetChangeLog()
+        {
+            if (IsDirectory)
+            {
+                if (Type == ChangeType.Create) return $"dc {Hash}";
+                else if (Type == ChangeType.Delete) return $"dd {Hash}";
+            }
+            else
+            {
+                if (Type == ChangeType.Create) return $"fc {Hash}";
+                if (Type == ChangeType.Delete) return $"fd {Hash}";
+                if (Type == ChangeType.Replace) return $"fr {Hash}";
+            }
 
-        //    var fstype = IsDirectory ? "directory" : "file";
-        //    throw new NotImplementedException($"Type[{Type.ToString()}] not implemented for {fstype}.");
-        //}
+            var fstype = IsDirectory ? "directory" : "file";
+            throw new NotImplementedException($"Type[{Type.ToString()}] not implemented for {fstype}.");
+        }
     }
 }
