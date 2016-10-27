@@ -43,13 +43,10 @@
   <ItemGroup>
     <Compile Include="Exentsions.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="FileHasher.cs" />
+    <Compile Include="FileSystem\SimpleSHA1.cs" />
     <Compile Include="FileSystem\ChangeEntry.cs" />
     <Compile Include="FileSystem\DirectoryEntry.cs" />
     <Compile Include="FileSystem\FileEntry.cs" />
-    <Compile Include="FileSystem\IFileSystem.cs" />
-    <Compile Include="FileSystem\MergedEntry.cs" />
-    <Compile Include="FileSystem\PhysicalFileSystem.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

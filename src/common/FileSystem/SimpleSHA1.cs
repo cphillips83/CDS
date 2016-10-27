@@ -6,12 +6,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CDS
+namespace CDS.FileSystem
 {
-    public class FileHasher
+    public class SimpleSHA1
     {
-        public readonly static FileHasher NonThreadSafe = new FileHasher();
-        private class FileHasherInternal : SHA1Managed
+        public readonly static SimpleSHA1 NonThreadSafe = new SimpleSHA1();
+        private class SimpleSHA1Internal : SHA1Managed
         {
             public async Task<byte[]> ComputeHashAsync(Stream inputStream)
             {
@@ -33,20 +33,20 @@ namespace CDS
             }
         }
 
-        private FileHasherInternal _hashAlgorithm = new FileHasherInternal();
+        private SimpleSHA1Internal _hashAlgorithm = new SimpleSHA1Internal();
 
-        public string ComputeFilenameHash(string dirName)
+        public string Hash(string value)
         {
-            if (string.IsNullOrEmpty(dirName))
+            if (string.IsNullOrEmpty(value))
                 return new string('0', 32);
 
-            var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(dirName.ToLower());
+            var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(value.ToLower());
             var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
 
             return BytesToHex(fileHash);
         }
 
-        public string ComputeFiledataHash(Stream inputStream)
+        public string Hash(Stream inputStream)
         {
             var fileData = _hashAlgorithm.ComputeHash(inputStream);
 

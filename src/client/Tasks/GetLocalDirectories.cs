@@ -47,7 +47,7 @@ namespace CDS.Tasks
         public GetLocalDirectories(string basePath)
         {
             BasePath = basePath;
-            Root = new DirectoryEntry(FileHasher.NonThreadSafe.ComputeFilenameHash(null), string.Empty);
+            Root = new DirectoryEntry(SimpleSHA1.NonThreadSafe.Hash((string)null), string.Empty);
         }
 
         protected override void Execute()
@@ -74,7 +74,7 @@ namespace CDS.Tasks
                         if (Errors.ReachedMaxErrors)
                             break;
 
-                        dirEntries[i] = new DirectoryEntry(FileHasher.NonThreadSafe.ComputeFilenameHash(dirs[i]), dirs[i]);
+                        dirEntries[i] = new DirectoryEntry(SimpleSHA1.NonThreadSafe.Hash(dirs[i]), dirs[i]);
                         if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
                             dirsToProcess.Push(dirEntries[i]);
                     }

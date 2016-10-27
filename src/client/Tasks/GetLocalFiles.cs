@@ -38,7 +38,7 @@ namespace CDS.Tasks
                     var files = Directory.GetFiles(d.Path);
                     if (files.Length > 0)
                     {
-                        var hasher = new FileHasher();
+                        var hasher = new SimpleSHA1();
 
                         var fileEntries = new FileEntry[files.Length];
                         for (int i = 0; i < files.Length; i++)
@@ -50,8 +50,8 @@ namespace CDS.Tasks
                             {
                                 using (var s = File.OpenRead(files[i]))
                                 {
-                                    var nameHash = hasher.ComputeFilenameHash(files[i]);
-                                    var dataHash = hasher.ComputeFiledataHash(s);
+                                    var nameHash = hasher.Hash(files[i]);
+                                    var dataHash = hasher.Hash(s);
                                     var fe = new FileEntry(nameHash, dataHash, files[i]);
                                     fileEntries[i] = fe;
                                 }

@@ -3,6 +3,7 @@ using CDS.FileSystem;
 using CDS.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,11 +26,11 @@ namespace unit
             var left = new DirectoryEntry(new string('0', 32), string.Empty);
             var right = new DirectoryEntry(new string('0', 32), string.Empty);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(0, changeSet.Changes.Count);
+            Assert.AreEqual(false, changed);
+            Assert.AreEqual(0, changeSet.Count);
         }
 
         [TestMethod]
@@ -42,11 +43,11 @@ namespace unit
             left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('1', 32), "subdir") });
             right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('1', 32), "subdir") });
             
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(0, changeSet.Changes.Count);
+            Assert.AreEqual(false, changed);
+            Assert.AreEqual(0, changeSet.Count);
         }
 
         [TestMethod]
@@ -59,12 +60,12 @@ namespace unit
             //left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('1', 32), "subdir") });
             right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir2") });
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(1, changeSet.Changes.Count);
-            Assert.AreEqual(ChangeType.Create, changeSet.Changes.Take().Type);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(1, changeSet.Count);
+            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
         }
 
         [TestMethod]
@@ -77,12 +78,12 @@ namespace unit
             left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('1', 32), "subdir") });
             //right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir2") });
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(1, changeSet.Changes.Count);
-            Assert.AreEqual(ChangeType.Delete, changeSet.Changes.Take().Type);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(1, changeSet.Count);
+            Assert.AreEqual(ChangeType.Delete, changeSet.Take().Type);
         }
 
         [TestMethod]
@@ -96,12 +97,12 @@ namespace unit
             subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir") });
             left.AddDirectories(subleft);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(1, changeSet.Changes.Count);
-            Assert.AreEqual(ChangeType.Delete, changeSet.Changes.Take().Type);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(1, changeSet.Count);
+            Assert.AreEqual(ChangeType.Delete, changeSet.Take().Type);
         }
 
         [TestMethod]
@@ -115,13 +116,13 @@ namespace unit
             subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir") });
             right.AddDirectories(subright);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(2, changeSet.Changes.Count);
-            Assert.AreEqual(ChangeType.Create, changeSet.Changes.Take().Type);
-            Assert.AreEqual(ChangeType.Create, changeSet.Changes.Take().Type);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(2, changeSet.Count);
+            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
+            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
         }
 
 
@@ -139,28 +140,28 @@ namespace unit
             subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir") });
             right.AddDirectories(subright);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(4, changeSet.Changes.Count);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(4, changeSet.Count);
 
-            var result = changeSet.Changes.Take();
+            var result = changeSet.Take();
             Assert.AreEqual(ChangeType.Create, result.Type);
             Assert.AreEqual(new string('4', 32), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
-            result = changeSet.Changes.Take();
+            result = changeSet.Take();
             Assert.AreEqual(ChangeType.Create, result.Type);
             Assert.AreEqual(new string('1', 32), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
 
-            result = changeSet.Changes.Take();
+            result = changeSet.Take();
             Assert.AreEqual(ChangeType.Create, result.Type);
             Assert.AreEqual(new string('3', 32), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
-            result = changeSet.Changes.Take();
+            result = changeSet.Take();
             Assert.AreEqual(ChangeType.Create, result.Type);
             Assert.AreEqual(new string('2', 32), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
@@ -180,18 +181,18 @@ namespace unit
             subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir") });
             left.AddDirectories(subleft);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(2, changeSet.Changes.Count);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(2, changeSet.Count);
 
-            var result = changeSet.Changes.Take();
+            var result = changeSet.Take();
             Assert.AreEqual(ChangeType.Delete, result.Type);
             Assert.AreEqual(new string('4', 32), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
-            result = changeSet.Changes.Take();
+            result = changeSet.Take();
             Assert.AreEqual(ChangeType.Delete, result.Type);
             Assert.AreEqual(new string('1', 32), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
@@ -219,18 +220,18 @@ namespace unit
             subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(new string('2', 32), "subdir") });
             right.AddDirectories(subright);
 
-            var changeSet = new GetChangeSet(left, right);
-            changeSet.Process();
-            changeSet.Wait();
+            var changeSet = new BlockingCollection<ChangeEntry>();
+            var changed = DirectoryEntry.FindChanges(left, right, changeSet);
 
-            Assert.AreEqual(2, changeSet.Changes.Count);
+            Assert.AreEqual(true, changed);
+            Assert.AreEqual(2, changeSet.Count);
 
-            var result = changeSet.Changes.Take();
+            var result = changeSet.Take();
             Assert.AreEqual(ChangeType.Replace, result.Type);
             Assert.AreEqual(new string('4', 32), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
-            result = changeSet.Changes.Take();
+            result = changeSet.Take();
             Assert.AreEqual(ChangeType.Replace, result.Type);
             Assert.AreEqual(new string('3', 32), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
