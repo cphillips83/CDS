@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Exentsions.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="FileSystem\SimpleSHA1.cs" />
+    <Compile Include="SimpleSHA1.cs" />
     <Compile Include="FileSystem\ChangeEntry.cs" />
     <Compile Include="FileSystem\DirectoryEntry.cs" />
     <Compile Include="FileSystem\FileEntry.cs" />
