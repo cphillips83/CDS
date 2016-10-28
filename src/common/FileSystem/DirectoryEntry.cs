@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,41 @@ namespace CDS.FileSystem
             foreach (var de in entries)
                 if (de != null)
                     Directories.Add(de.Hash, de);
+        }
+
+        public void WriteManifest(BinaryWriter bw)
+        {
+            Hash.Write(bw);
+            bw.Write(Directories.Count);
+            foreach (var de in Directories.Values)
+                de.WriteManifest(bw);
+
+            bw.Write(Files.Count);
+            foreach (var fe in Files.Values)
+                fe.WriteManifest(bw);
+        }
+
+        public static DirectoryEntry ReadManifest(BinaryReader br)
+        {
+            var hash = Hash.Create(br);
+            var path = string.Empty;
+            var de = new DirectoryEntry(hash, path);
+
+            var dirs = br.ReadInt32();
+            var subdirs = new DirectoryEntry[dirs];
+            for (int i = 0; i < dirs; i++)
+                subdirs[i] = ReadManifest(br);
+
+            de.AddDirectories(subdirs);
+
+            var files = br.ReadInt32();
+            var subfiles = new FileEntry[files];
+            for (int i = 0; i < files; i++)
+                subfiles[i] = FileEntry.ReadManifest(br);
+
+            de.AddFiles(subfiles);
+
+            return de;        
         }
 
         public static ChangeEntryAction Compare(DirectoryEntry left, DirectoryEntry right)

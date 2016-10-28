@@ -16,7 +16,7 @@ namespace CDS.FileSystem
             IsDirectory = isDirectory;
         }
 
-        public void Save(BinaryWriter bw)
+        public void Write(BinaryWriter bw)
         {
             var flags = (byte)Action;
             if (IsDirectory)
