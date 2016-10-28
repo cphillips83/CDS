@@ -44,8 +44,6 @@
     <Compile Include="Exentsions.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FileSystem\Hash.cs" />
-    <Compile Include="FileSystem\IFileSystem.cs" />
-    <Compile Include="FileSystem\Manifest.cs" />
     <Compile Include="SimpleSHA1.cs" />
     <Compile Include="FileSystem\ChangeEntry.cs" />
     <Compile Include="FileSystem\DirectoryEntry.cs" />

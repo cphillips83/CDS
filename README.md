@@ -46,3 +46,4 @@ Client Commands
                 -commit  <SHA>  will instead show the changeset of a specific commit
 - commit <message>  (only when not in read-only)
             = Will stage and commit all files from the result of status and advanced the head
+- pull		= Combines fetch and pull
