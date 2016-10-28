@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CDS.FileSystem
 {
-    public class DirectoryEntry
+    public class DirectoryEntry : IEquatable<DirectoryEntry>
     {
         public readonly Hash Hash;
         public readonly Dictionary<Hash, FileEntry> Files = new Dictionary<Hash, FileEntry>();
@@ -151,6 +151,40 @@ namespace CDS.FileSystem
         public override string ToString()
         {
             return $"{{ Hash: {Hash}, Directories: {Directories.Count}, Files: {Files.Count} }}";
+        }
+
+        public static bool operator ==(DirectoryEntry left, DirectoryEntry right)
+        {
+            if ((object)left == null)
+                return (object)right == null;
+
+            return left.Equals(right);
+        }
+
+        public static bool operator != (DirectoryEntry left, DirectoryEntry right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return Equals((DirectoryEntry)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Hash.GetHashCode();
+        }
+
+        public bool Equals(DirectoryEntry other)
+        {
+            if ((object)other == null) return false;
+            return Hash == other.Hash;
         }
     }
 }

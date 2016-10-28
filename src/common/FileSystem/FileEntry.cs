@@ -48,11 +48,44 @@ namespace CDS.FileSystem
             return $"{{ NameHash: {NameHash}, DataHash: {DataHash} }}";
         }
 
-        //public string ObjectFolder { get { return System.IO.Path.Combine(Config.ObjectPath, Hash.Substring(0, 2)); } }
+        public static bool operator ==(FileEntry left, FileEntry right)
+        {
+            if ((object)left == null)
+                return (object)right == null;
 
-        //public string ObjectFileName { get { return Hash.Substring(2); } }
+            return left.Equals(right);
+        }
 
-        //public string ObjectPath { get { return System.IO.Path.Combine(ObjectFolder, ObjectFileName); } }
-        //public abstract Stream GetStream();
+        public static bool operator !=(FileEntry left, FileEntry right)
+        {
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return Equals((FileEntry)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + NameHash.GetHashCode();
+                hash = hash * 23 + DataHash.GetHashCode();
+                return hash;
+            }
+        }
+
+        public bool Equals(FileEntry other)
+        {
+            if ((object)other == null) return false;
+            return NameHash == other.NameHash && DataHash == other.DataHash;
+        }
     }
 }
