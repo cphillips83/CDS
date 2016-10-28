@@ -77,6 +77,13 @@ namespace CDS.FileSystem
             return ChangeEntryAction.OK;
         }
 
+        public static bool FindChanges(DirectoryEntry left, DirectoryEntry right)
+        {
+            var result = false;
+            CompareDirectories(left, right, null, ref result);
+            return result;
+        }
+
         public static bool FindChanges(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback)
         {
             var result = false;
@@ -109,7 +116,7 @@ namespace CDS.FileSystem
                 var r = DirectoryEntry.Compare(sdleft, sdright);
                 if (r != ChangeEntryAction.OK)
                 {
-                    callback(new ChangeEntry(dir, r, true));
+                    if(callback != null) callback(new ChangeEntry(dir, r, true));
                     result = true;
                 }
 
@@ -142,7 +149,7 @@ namespace CDS.FileSystem
 
                 if (r != ChangeEntryAction.OK)
                 {
-                    callback(new ChangeEntry(file, r, false));
+                    if (callback != null) callback(new ChangeEntry(file, r, false));
                     result = true;
                 }
             }

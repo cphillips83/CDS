@@ -66,6 +66,7 @@
     <Compile Include="FileSystemTests.cs" />
     <Compile Include="HashTests.cs" />
     <Compile Include="LibraryTests.cs" />
+    <Compile Include="ManifestTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

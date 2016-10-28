@@ -199,7 +199,6 @@ namespace unit
         [TestMethod]
         public void ChangeSet_CompareSubdirFiles_ReplaceFiles()
         {
-            //"01234567890123456789012345678901"
             var left = new DirectoryEntry(Hash.Empty);
             var right = new DirectoryEntry(Hash.Empty);
 
