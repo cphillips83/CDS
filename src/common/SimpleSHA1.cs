@@ -11,29 +11,29 @@ namespace CDS
     public class SimpleSHA1
     {
         public readonly static SimpleSHA1 NonThreadSafe = new SimpleSHA1();
-        private class SimpleSHA1Internal : SHA1Managed
-        {
-            public async Task<byte[]> ComputeHashAsync(Stream inputStream)
-            {
-                byte[] array = new byte[4096];
-                int num;
-                do
-                {
-                    num = await inputStream.ReadAsync(array, 0, 4096).ConfigureAwait(false);
-                    if (num > 0)
-                    {
-                        this.HashCore(array, 0, num);
-                    }
-                }
-                while (num > 0);
-                this.HashValue = this.HashFinal();
-                byte[] result = (byte[])this.HashValue.Clone();
-                this.Initialize();
-                return result;
-            }
-        }
+        //private class SimpleSHA1Internal : SHA1Managed
+        //{
+        //    public async Task<byte[]> ComputeHashAsync(Stream inputStream)
+        //    {
+        //        byte[] array = new byte[4096];
+        //        int num;
+        //        do
+        //        {
+        //            num = await inputStream.ReadAsync(array, 0, 4096).ConfigureAwait(false);
+        //            if (num > 0)
+        //            {
+        //                this.HashCore(array, 0, num);
+        //            }
+        //        }
+        //        while (num > 0);
+        //        this.HashValue = this.HashFinal();
+        //        byte[] result = (byte[])this.HashValue.Clone();
+        //        this.Initialize();
+        //        return result;
+        //    }
+        //}
 
-        private SimpleSHA1Internal _hashAlgorithm = new SimpleSHA1Internal();
+        private SHA256 _hashAlgorithm = new SHA256Managed();
 
         public string Hash(string value)
         {

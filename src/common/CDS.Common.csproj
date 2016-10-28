@@ -43,12 +43,18 @@
   <ItemGroup>
     <Compile Include="Exentsions.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="FileSystem\Hash.cs" />
+    <Compile Include="FileSystem\IFileSystem.cs" />
+    <Compile Include="FileSystem\Manifest.cs" />
     <Compile Include="SimpleSHA1.cs" />
     <Compile Include="FileSystem\ChangeEntry.cs" />
     <Compile Include="FileSystem\DirectoryEntry.cs" />
     <Compile Include="FileSystem\FileEntry.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FSTree\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
