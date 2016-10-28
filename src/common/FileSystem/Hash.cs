@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CDS.FileSystem
 {
-    public struct Hash
+    public struct Hash : IEquatable<Hash>
     {
         private ulong _val0;
         private ulong _val1;
@@ -157,15 +157,17 @@ namespace CDS.FileSystem
 
         public static bool operator ==(Hash left, Hash right)
         {
-            return left._val0 == right._val0 && left._val1 == right._val2 &&
+            return left._val0 == right._val0 && left._val1 == right._val1 &&
                 left._val2 == right._val2 && left._val3 == right._val3;
         }
 
         public static bool operator !=(Hash left, Hash right)
         {
-            return left._val0 != right._val0 || left._val1 != right._val2 ||
+            return left._val0 != right._val0 || left._val1 != right._val1 ||
                 left._val2 != right._val2 || left._val3 != right._val3;
         }
+
+        public static Hash Empty { get { return Create(0, 0, 0, 0); } }
 
         public override bool Equals(object obj)
         {
@@ -174,9 +176,7 @@ namespace CDS.FileSystem
                 return false;
             }
 
-            var other = (Hash)obj;
-            return _val0 == other._val0 && _val1 == other._val2 &&
-                    _val2 == other._val2 && _val3 == other._val3;
+            return Equals( (Hash)obj);
         }
 
         public override int GetHashCode()
@@ -190,6 +190,12 @@ namespace CDS.FileSystem
                 hash = hash * 23 + _val3.GetHashCode();
                 return hash;
             }
+        }
+
+        public bool Equals(Hash other)
+        {
+            return _val0 == other._val0 && _val1 == other._val1 &&
+                    _val2 == other._val2 && _val3 == other._val3;
         }
     }
 }
