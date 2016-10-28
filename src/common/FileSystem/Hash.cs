@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,24 @@ namespace CDS.FileSystem
             GetBytes(data, 16, _val2);
             GetBytes(data, 24, _val3);
             return data;
+        }
+
+        public void Write(BinaryWriter bw)
+        {
+            bw.Write(_val0);
+            bw.Write(_val1);
+            bw.Write(_val2);
+            bw.Write(_val3);
+        }
+
+        public static Hash Create(BinaryReader br)
+        {
+            var hash = new Hash();
+            hash._val0 = br.ReadUInt64();
+            hash._val1 = br.ReadUInt64();
+            hash._val2 = br.ReadUInt64();
+            hash._val3 = br.ReadUInt64();
+            return hash;
         }
 
         public static Hash Create(ulong val0, ulong val1, ulong val2, ulong val3)
@@ -135,7 +154,6 @@ namespace CDS.FileSystem
             }
             return val;
         }
-
 
         public static bool operator ==(Hash left, Hash right)
         {
