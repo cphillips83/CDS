@@ -21,6 +21,7 @@ namespace CDS
         {
             EmbeddedAssembly.InitializeResolver();
 
+
         }
 
         static void Main()
