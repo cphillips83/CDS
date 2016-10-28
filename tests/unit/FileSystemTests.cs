@@ -25,7 +25,7 @@ namespace unit
 
             var result = FileEntry.Compare(left, right);
 
-            Assert.AreEqual(ChangeType.OK, result);
+            Assert.AreEqual(ChangeEntryAction.OK, result);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace unit
 
             var result = FileEntry.Compare(left, right);
 
-            Assert.AreEqual(ChangeType.Replace, result);
+            Assert.AreEqual(ChangeEntryAction.Replace, result);
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace unit
 
             var result = FileEntry.Compare(null, right);
 
-            Assert.AreEqual(ChangeType.Create, result);
+            Assert.AreEqual(ChangeEntryAction.Create, result);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace unit
 
             var result = FileEntry.Compare(left, null);
 
-            Assert.AreEqual(ChangeType.Delete, result);
+            Assert.AreEqual(ChangeEntryAction.Delete, result);
         }
 
         [TestMethod]
@@ -67,7 +67,7 @@ namespace unit
 
             var result = DirectoryEntry.Compare(left, right);
 
-            Assert.AreEqual(ChangeType.OK, result);
+            Assert.AreEqual(ChangeEntryAction.OK, result);
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace unit
 
             var result = DirectoryEntry.Compare(left, right);
 
-            Assert.AreEqual(ChangeType.OK, result);
+            Assert.AreEqual(ChangeEntryAction.OK, result);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace unit
 
             var result = DirectoryEntry.Compare(left, null);
 
-            Assert.AreEqual(ChangeType.Delete, result);
+            Assert.AreEqual(ChangeEntryAction.Delete, result);
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace unit
 
             var result = DirectoryEntry.Compare(null, right);
 
-            Assert.AreEqual(ChangeType.Create, result);
+            Assert.AreEqual(ChangeEntryAction.Create, result);
         }
     }
 }

@@ -36,14 +36,14 @@ namespace CDS.FileSystem
                     Directories.Add(de.Hash, de);
         }
 
-        public static ChangeType Compare(DirectoryEntry left, DirectoryEntry right)
+        public static ChangeEntryAction Compare(DirectoryEntry left, DirectoryEntry right)
         {
             if (left == null && right != null)
-                return ChangeType.Create;
+                return ChangeEntryAction.Create;
             else if (left != null && right == null)
-                return ChangeType.Delete;
+                return ChangeEntryAction.Delete;
 
-            return ChangeType.OK;
+            return ChangeEntryAction.OK;
         }
 
         public static bool FindChanges(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback)
@@ -76,13 +76,13 @@ namespace CDS.FileSystem
                 var sdright = right != null ? right.Directories.SafeGet(dir) : null;
 
                 var r = DirectoryEntry.Compare(sdleft, sdright);
-                if (r != ChangeType.OK)
+                if (r != ChangeEntryAction.OK)
                 {
                     callback(new ChangeEntry(dir, r, true));
                     result = true;
                 }
 
-                if (r != ChangeType.Delete)
+                if (r != ChangeEntryAction.Delete)
                     CompareDirectories(sdleft, sdright, callback, ref result);
             }
         }
@@ -109,7 +109,7 @@ namespace CDS.FileSystem
                 var fileright = right != null ? right.Files.SafeGet(file) : null;
                 var r = FileEntry.Compare(fileleft, fileright);
 
-                if (r != ChangeType.OK)
+                if (r != ChangeEntryAction.OK)
                 {
                     callback(new ChangeEntry(file, r, false));
                     result = true;

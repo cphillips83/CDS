@@ -63,7 +63,7 @@ namespace unit
 
             Assert.AreEqual(true, changed);
             Assert.AreEqual(1, changeSet.Count);
-            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
+            Assert.AreEqual(ChangeEntryAction.Create, changeSet.Take().Action);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace unit
 
             Assert.AreEqual(true, changed);
             Assert.AreEqual(1, changeSet.Count);
-            Assert.AreEqual(ChangeType.Delete, changeSet.Take().Type);
+            Assert.AreEqual(ChangeEntryAction.Delete, changeSet.Take().Action);
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@ namespace unit
 
             Assert.AreEqual(true, changed);
             Assert.AreEqual(1, changeSet.Count);
-            Assert.AreEqual(ChangeType.Delete, changeSet.Take().Type);
+            Assert.AreEqual(ChangeEntryAction.Delete, changeSet.Take().Action);
         }
 
         [TestMethod]
@@ -118,8 +118,8 @@ namespace unit
 
             Assert.AreEqual(true, changed);
             Assert.AreEqual(2, changeSet.Count);
-            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
-            Assert.AreEqual(ChangeType.Create, changeSet.Take().Type);
+            Assert.AreEqual(ChangeEntryAction.Create, changeSet.Take().Action);
+            Assert.AreEqual(ChangeEntryAction.Create, changeSet.Take().Action);
         }
 
 
@@ -144,22 +144,22 @@ namespace unit
             Assert.AreEqual(4, changeSet.Count);
 
             var result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Create, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Create, result.Action);
             Assert.AreEqual(Hash.Create(4, 0, 0, 0), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
             result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Create, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Create, result.Action);
             Assert.AreEqual(Hash.Create(1, 0, 0, 0), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
 
             result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Create, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Create, result.Action);
             Assert.AreEqual(Hash.Create(3, 0, 0, 0), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
             result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Create, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Create, result.Action);
             Assert.AreEqual(Hash.Create(2, 0, 0, 0), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
         }
@@ -185,12 +185,12 @@ namespace unit
             Assert.AreEqual(2, changeSet.Count);
 
             var result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Delete, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Delete, result.Action);
             Assert.AreEqual(Hash.Create(4, 0, 0, 0), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
             result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Delete, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Delete, result.Action);
             Assert.AreEqual(Hash.Create(1, 0, 0, 0), result.Hash);
             Assert.AreEqual(true, result.IsDirectory);
 
@@ -224,12 +224,12 @@ namespace unit
             Assert.AreEqual(2, changeSet.Count);
 
             var result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Replace, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Replace, result.Action);
             Assert.AreEqual(Hash.Create(4, 0, 0, 0), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 
             result = changeSet.Take();
-            Assert.AreEqual(ChangeType.Replace, result.Type);
+            Assert.AreEqual(ChangeEntryAction.Replace, result.Action);
             Assert.AreEqual(Hash.Create(3, 0, 0, 0), result.Hash);
             Assert.AreEqual(false, result.IsDirectory);
 

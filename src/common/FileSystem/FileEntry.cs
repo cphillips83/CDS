@@ -21,16 +21,16 @@ namespace CDS.FileSystem
             this.Name = System.IO.Path.GetFileName(path);
         }
 
-        public static ChangeType Compare(FileEntry left, FileEntry right)
+        public static ChangeEntryAction Compare(FileEntry left, FileEntry right)
         {
             if (left == null && right != null)
-                return ChangeType.Create;
+                return ChangeEntryAction.Create;
             else if (left != null && right == null)
-                return ChangeType.Delete;
+                return ChangeEntryAction.Delete;
             else if (left.DataHash != right.DataHash)
-                return ChangeType.Replace;
+                return ChangeEntryAction.Replace;
 
-            return ChangeType.OK;
+            return ChangeEntryAction.OK;
         }
 
         public override string ToString()
