@@ -25,7 +25,7 @@ namespace unit
         public void Library_Load_Common()
         {
             Assert.IsNotNull(EmbeddedAssembly.LoadCommon());
-            Assert.IsNotNull(new FileEntry(Hash.Empty, Hash.Empty, string.Empty));
+            Assert.IsNotNull(new FileEntry(Hash.Empty, Hash.Empty));
         }
 
         [TestMethod]

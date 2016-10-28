@@ -11,16 +11,12 @@ namespace CDS.FileSystem
     public class DirectoryEntry
     {
         public readonly Hash Hash;
-        public readonly string Path;
-        public readonly string Name;
         public readonly Dictionary<Hash, FileEntry> Files = new Dictionary<Hash, FileEntry>();
         public readonly Dictionary<Hash, DirectoryEntry> Directories = new Dictionary<Hash, DirectoryEntry>();
 
-        public DirectoryEntry(Hash hash, string path)
+        public DirectoryEntry(Hash hash)
         {
             Hash = hash;
-            Path = path;
-            Name = System.IO.Path.GetFileName(path);
         }
 
         public void AddFiles(FileEntry[] entries)
@@ -52,8 +48,7 @@ namespace CDS.FileSystem
         public static DirectoryEntry ReadManifest(BinaryReader br)
         {
             var hash = Hash.Create(br);
-            var path = string.Empty;
-            var de = new DirectoryEntry(hash, path);
+            var de = new DirectoryEntry(hash);
 
             var dirs = br.ReadInt32();
             var subdirs = new DirectoryEntry[dirs];
@@ -155,7 +150,7 @@ namespace CDS.FileSystem
 
         public override string ToString()
         {
-            return $"{{ Name: {Name}, Files: {Files.Count}, Directories: {Directories.Count}, Path: {Path} }}";
+            return $"{{ Hash: {Hash}, Directories: {Directories.Count}, Files: {Files.Count} }}";
         }
     }
 }

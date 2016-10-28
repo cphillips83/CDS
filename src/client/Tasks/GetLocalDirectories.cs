@@ -40,6 +40,7 @@ namespace CDS.Tasks
         public readonly string BasePath;
         public readonly DirectoryEntry Root;
         public readonly BlockingCollection<DirectoryEntry> Directories = new BlockingCollection<DirectoryEntry>();
+        public readonly ConcurrentDictionary<Hash, string> DirectoryMaps = new ConcurrentDictionary<Hash, string>();
 
         private int _dirCount = 0;
         public int TotalDirectories { get { return _dirCount; } }
@@ -51,7 +52,8 @@ namespace CDS.Tasks
             if (!BasePath.EndsWith("\\"))
                 BasePath += "\\";
 
-            Root = new DirectoryEntry(SimpleSHA1.NonThreadSafe.ComputeHash((string)null), string.Empty);
+            Root = new DirectoryEntry(Hash.Empty);
+            DirectoryMaps.TryAdd(Root.Hash, string.Empty);
         }
 
         protected override void Execute()
@@ -71,7 +73,8 @@ namespace CDS.Tasks
 
                 try
                 {
-                    var fullPath = Path.Combine(BasePath, de.Path);
+                    var path = DirectoryMaps[de.Hash];
+                    var fullPath = Path.Combine(BasePath, path);
                     var dirs = Directory.GetDirectories(fullPath);
                     var dirEntries = new DirectoryEntry[dirs.Length];
                     for (int i = 0; i < dirs.Length; i++)
@@ -79,12 +82,12 @@ namespace CDS.Tasks
                         if (Errors.ReachedMaxErrors)
                             break;
 
-
                         var relativePath = dirs[i].Substring(BasePath.Length);
                         var filenameHash = SimpleSHA1.NonThreadSafe.ComputeHash(relativePath);
-                        dirEntries[i] = new DirectoryEntry(filenameHash, relativePath);
-                        if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
-                            dirsToProcess.Push(dirEntries[i]);
+                        dirEntries[i] = new DirectoryEntry(filenameHash);
+                        //if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
+                        DirectoryMaps.TryAdd(dirEntries[i].Hash, relativePath);
+                        dirsToProcess.Push(dirEntries[i]);
                     }
                     de.AddDirectories(dirEntries);
                 }

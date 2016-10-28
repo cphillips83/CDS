@@ -21,6 +21,8 @@ namespace CDS.Tasks
         private int _directoriesProcessed;
         public int DirectoriesProcessed { get { return _directoriesProcessed; } }
 
+        public readonly ConcurrentDictionary<Hash, string> FileMaps = new ConcurrentDictionary<Hash, string>();
+
         public GetLocalFiles(GetLocalDirectories producer)
         {
             _directoryProducer = producer;
@@ -35,12 +37,13 @@ namespace CDS.Tasks
 
                 try
                 {
-                    var fullPath = Path.Combine(_directoryProducer.BasePath, d.Path);
+                    var path = _directoryProducer.DirectoryMaps[d.Hash];
+                    var fullPath = Path.Combine(_directoryProducer.BasePath, path);
                     var files = Directory.GetFiles(fullPath);
                     if (files.Length > 0)
                     {
                         var hasher = new SimpleSHA1();
-
+                        var fileMaps = new List<KeyValuePair<Hash, string>>(files.Length);
                         var fileEntries = new FileEntry[files.Length];
                         for (int i = 0; i < files.Length; i++)
                         {
@@ -54,8 +57,9 @@ namespace CDS.Tasks
                                 {
                                     var nameHash = hasher.ComputeHash(relativePath);
                                     var dataHash = hasher.ComputeHash(s);
-                                    var fe = new FileEntry(nameHash, dataHash, relativePath);
+                                    var fe = new FileEntry(nameHash, dataHash);
                                     fileEntries[i] = fe;
+                                    FileMaps.TryAdd(nameHash, relativePath);
                                 }
                             }
                             catch (Exception ex)

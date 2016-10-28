@@ -11,15 +11,11 @@ namespace CDS.FileSystem
     {
         public readonly Hash NameHash;
         public readonly Hash DataHash;
-        public readonly string Name;
-        public readonly string Path;
 
-        public FileEntry(Hash nameHash, Hash dataHash, string path)
+        public FileEntry(Hash nameHash, Hash dataHash)
         {
             this.NameHash = nameHash;
             this.DataHash = dataHash;
-            this.Path = path;
-            this.Name = System.IO.Path.GetFileName(path);
         }
 
         public void WriteManifest(BinaryWriter bw)
@@ -32,7 +28,7 @@ namespace CDS.FileSystem
         {
             var nameHash = Hash.Create(br);
             var dataHash = Hash.Create(br);
-            return new FileSystem.FileEntry(nameHash, dataHash, string.Empty);
+            return new FileSystem.FileEntry(nameHash, dataHash);
         }
 
         public static ChangeEntryAction Compare(FileEntry left, FileEntry right)
@@ -49,7 +45,7 @@ namespace CDS.FileSystem
 
         public override string ToString()
         {
-            return $"{{ NameHash: {NameHash}, DataHash: {DataHash}, Name: {Name}, Path: {Path} }}";
+            return $"{{ NameHash: {NameHash}, DataHash: {DataHash} }}";
         }
 
         //public string ObjectFolder { get { return System.IO.Path.Combine(Config.ObjectPath, Hash.Substring(0, 2)); } }

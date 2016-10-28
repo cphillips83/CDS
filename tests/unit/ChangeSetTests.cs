@@ -23,8 +23,8 @@ namespace unit
         public void ChangeSet_CompareEmpty_NoChanges()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
             var changed = DirectoryEntry.FindChanges(left, right, changeSet);
@@ -37,11 +37,11 @@ namespace unit
         public void ChangeSet_CompareSubdir_NoChanges()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") });
-            right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") });
+            left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) });
+            right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) });
 
             var changeSet = new BlockingCollection<ChangeEntry>();
             var changed = DirectoryEntry.FindChanges(left, right, changeSet);
@@ -53,10 +53,10 @@ namespace unit
         [TestMethod]
         public void ChangeSet_CompareSubdir_Create()
         {
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir2") });
+            right.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
 
             var changeSet = new BlockingCollection<ChangeEntry>();
             var changed = DirectoryEntry.FindChanges(left, right, changeSet);
@@ -70,10 +70,10 @@ namespace unit
         public void ChangeSet_CompareSubdir_Delete()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") });
+            left.AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) });
 
             var changeSet = new BlockingCollection<ChangeEntry>();
             var changed = DirectoryEntry.FindChanges(left, right, changeSet);
@@ -87,11 +87,11 @@ namespace unit
         public void ChangeSet_CompareSubdir_DeleteOnlyParent()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0) ) };
+            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             left.AddDirectories(subleft);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
@@ -106,11 +106,11 @@ namespace unit
         public void ChangeSet_CompareSubdir_CreateParentAndChild()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) };
+            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             right.AddDirectories(subright);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
@@ -127,14 +127,14 @@ namespace unit
         public void ChangeSet_CompareSubdirFiles_CreateParentAndChild()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            right.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0), "subfile") });
+            right.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0)) });
 
-            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subright[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0), "subfile") });
-            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) };
+            subright[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0)) });
+            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             right.AddDirectories(subright);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
@@ -168,14 +168,14 @@ namespace unit
         public void ChangeSet_CompareSubdirFiles_DeleteParentAndRoot()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            left.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0), "subfile") });
+            left.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0)) });
 
-            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subleft[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0), "subfile") });
-            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) };
+            subleft[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0)) });
+            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             left.AddDirectories(subleft);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
@@ -200,21 +200,21 @@ namespace unit
         public void ChangeSet_CompareSubdirFiles_ReplaceFiles()
         {
             //"01234567890123456789012345678901"
-            var left = new DirectoryEntry(Hash.Empty, string.Empty);
-            var right = new DirectoryEntry(Hash.Empty, string.Empty);
+            var left = new DirectoryEntry(Hash.Empty);
+            var right = new DirectoryEntry(Hash.Empty);
 
-            left.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0), "subfile") });
+            left.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(4, 0, 0, 0)) });
 
-            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subleft[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0), "subfile") });
-            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subleft = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) };
+            subleft[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(3, 0, 0, 0)) });
+            subleft[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             left.AddDirectories(subleft);
 
-            right.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(6, 0, 0, 0), "subfile") });
+            right.AddFiles(new FileEntry[] { new FileEntry(Hash.Create(4, 0, 0, 0), Hash.Create(6, 0, 0, 0)) });
 
-            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0), "subdir") };
-            subright[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(5, 0, 0, 0), "subfile") });
-            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0), "subdir") });
+            var subright = new DirectoryEntry[] { new DirectoryEntry(Hash.Create(1, 0, 0, 0)) };
+            subright[0].AddFiles(new FileEntry[] { new FileEntry(Hash.Create(3, 0, 0, 0), Hash.Create(5, 0, 0, 0)) });
+            subright[0].AddDirectories(new DirectoryEntry[] { new DirectoryEntry(Hash.Create(2, 0, 0, 0)) });
             right.AddDirectories(subright);
 
             var changeSet = new BlockingCollection<ChangeEntry>();
