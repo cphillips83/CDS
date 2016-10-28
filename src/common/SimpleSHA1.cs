@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using CDS.FileSystem;
 
 namespace CDS
 {
@@ -35,22 +36,22 @@ namespace CDS
 
         private SHA256 _hashAlgorithm = new SHA256Managed();
 
-        public string Hash(string value)
+        public Hash ComputeHash(string value)
         {
             if (string.IsNullOrEmpty(value))
-                return new string('0', 32);
+                return Hash.Empty;
 
             var fileBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(value.ToLower());
             var fileHash = _hashAlgorithm.ComputeHash(fileBytes);
 
-            return BytesToHex(fileHash);
+            return Hash.Create(fileHash);
         }
 
-        public string Hash(Stream inputStream)
+        public Hash ComputeHash(Stream inputStream)
         {
             var fileData = _hashAlgorithm.ComputeHash(inputStream);
 
-            return BytesToHex(fileData);
+            return Hash.Create(fileData);
         }
 
         //public async Task<string> ComputeHashAsync(string fileName, Stream inputStream)
@@ -62,22 +63,22 @@ namespace CDS
         //    return BytesToHex(fileHash, fileData);
         //}
 
-        private static string BytesToHex(byte[] file)
-        {
-            var sb = new StringBuilder(file.Length * 2);
-            for (var i = 0; i < file.Length; i++)
-                sb.AppendFormat("{0:X2}", file[i]);
+        //private static string BytesToHex(byte[] file)
+        //{
+        //    var sb = new StringBuilder(file.Length * 2);
+        //    for (var i = 0; i < file.Length; i++)
+        //        sb.AppendFormat("{0:X2}", file[i]);
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
 
-        private static string BytesToHex(byte[] file, byte[] data)
-        {
-            var sb = new StringBuilder(file.Length * 2);
-            for (var i = 0; i < file.Length; i++)
-                sb.AppendFormat("{0:X2}", file[i] ^ data[i]);
+        //private static string BytesToHex(byte[] file, byte[] data)
+        //{
+        //    var sb = new StringBuilder(file.Length * 2);
+        //    for (var i = 0; i < file.Length; i++)
+        //        sb.AppendFormat("{0:X2}", file[i] ^ data[i]);
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
     }
 }

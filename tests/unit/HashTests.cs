@@ -17,12 +17,104 @@ namespace unit
             EmbeddedAssembly.InitializeResolver();
         }
 
+
+        [TestMethod]
+        public void Hash_Equals_Operator()
+        {
+            var hash1 = Hash.Create(1, 2, 3, 4);
+            var hash2 = Hash.Create(1, 2, 3, 4);
+
+            Assert.IsTrue(hash1 == hash2);
+        }
+
+        [TestMethod]
+        public void Hash_NotEquals_Operator()
+        {
+            var hash1 = Hash.Create(1, 2, 3, 4);
+            var hash2 = Hash.Create(1, 2, 3, 4);
+
+            Assert.IsFalse(hash1 != hash2);
+        }
+
+        [TestMethod]
+        public void Hash_Equals_0_0_0_1()
+        {
+            var hash1 = Hash.Create(0, 0, 0, 1);
+            var hash2 = Hash.Create(0, 0, 0, 1);
+
+            Assert.AreEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_Equals_0_0_1_0()
+        {
+            var hash1 = Hash.Create(0, 0, 1, 0);
+            var hash2 = Hash.Create(0, 0, 1, 0);
+
+            Assert.AreEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_Equals_0_1_0_0()
+        {
+            var hash1 = Hash.Create(0, 1, 0, 0);
+            var hash2 = Hash.Create(0, 1, 0, 0);
+
+            Assert.AreEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_Equals_1_0_0_0()
+        {
+            var hash1 = Hash.Create(1, 0, 0, 0);
+            var hash2 = Hash.Create(1, 0, 0, 0);
+
+            Assert.AreEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_NotEquals_0_0_0_1()
+        {
+            var hash1 = Hash.Create(0, 0, 0, 0);
+            var hash2 = Hash.Create(0, 0, 0, 1);
+
+            Assert.AreNotEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_NotEquals_0_0_1_0()
+        {
+            var hash1 = Hash.Create(0, 0, 0, 0);
+            var hash2 = Hash.Create(0, 0, 1, 0);
+
+            Assert.AreNotEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_NotEquals_0_1_0_0()
+        {
+            var hash1 = Hash.Create(0, 0, 0, 0);
+            var hash2 = Hash.Create(0, 1, 0, 0);
+
+            Assert.AreNotEqual(hash1, hash2);
+        }
+
+        [TestMethod]
+        public void Hash_NotEquals_1_0_0_0()
+        {
+            var hash1 = Hash.Create(0, 0, 0, 0);
+            var hash2 = Hash.Create(1, 0, 0, 0);
+
+            Assert.AreNotEqual(hash1, hash2);
+        }
+
+
         [TestMethod]
         public void Hash_Equals_Zero()
         {
             var hash = Hash.Create(new byte[32]);
 
-            Assert.AreEqual(new string('0', 64), hash.ToString());                        
+            Assert.AreEqual(new string('0', 64), hash.ToString());
             CollectionAssert.AreEqual(new byte[32], hash.ToBytes());
         }
 
@@ -75,7 +167,7 @@ namespace unit
         {
             var hash = Hash.Create(0xFF5A5A5A5A5A5A5A, 0xA5A5A5A5A5A5A5A5, 0x5A5A5A5A5A5A5A5A, 0xA5A5A5A5A5A5A5FF);
             var data = new byte[32];
-            for(var i = 0; i< data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
             {
                 if ((i >= 0 && i < 8) || (i >= 16 && i < 24))
                     data[i] = 0x5A;

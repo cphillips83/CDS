@@ -9,13 +9,13 @@ namespace CDS.FileSystem
 {
     public class DirectoryEntry
     {
-        public readonly string Hash;
+        public readonly Hash Hash;
         public readonly string Path;
         public readonly string Name;
-        public readonly Dictionary<string, FileEntry> Files = new Dictionary<string, FileEntry>();
-        public readonly Dictionary<string, DirectoryEntry> Directories = new Dictionary<string, DirectoryEntry>();
+        public readonly Dictionary<Hash, FileEntry> Files = new Dictionary<Hash, FileEntry>();
+        public readonly Dictionary<Hash, DirectoryEntry> Directories = new Dictionary<Hash, DirectoryEntry>();
 
-        public DirectoryEntry(string hash, string path)
+        public DirectoryEntry(Hash hash, string path)
         {
             Hash = hash;
             Path = path;
@@ -64,9 +64,9 @@ namespace CDS.FileSystem
         {
             CompareFiles(left, right, callback, ref result);
 
-            var lefthash = left != null ? new HashSet<string>(left.Directories.Keys) : new HashSet<string>();
-            var righthash = right != null ? new HashSet<string>(right.Directories.Keys) : new HashSet<string>();
-            var bothhash = new HashSet<string>(lefthash);
+            var lefthash = left != null ? new HashSet<Hash>(left.Directories.Keys) : new HashSet<Hash>();
+            var righthash = right != null ? new HashSet<Hash>(right.Directories.Keys) : new HashSet<Hash>();
+            var bothhash = new HashSet<Hash>(lefthash);
             foreach (var key in righthash)
                 bothhash.Add(key);
 
@@ -89,7 +89,7 @@ namespace CDS.FileSystem
 
         private static void CompareFiles(DirectoryEntry left, DirectoryEntry right, Action<ChangeEntry> callback, ref bool result)
         {
-            var hash = new HashSet<string>();
+            var hash = new HashSet<Hash>();
 
             if (left != null)
             {

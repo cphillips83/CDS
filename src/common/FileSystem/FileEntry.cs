@@ -8,12 +8,12 @@ namespace CDS.FileSystem
 {
     public class FileEntry
     {
-        public readonly string NameHash;
-        public readonly string DataHash;
+        public readonly Hash NameHash;
+        public readonly Hash DataHash;
         public readonly string Name;
         public readonly string Path;
 
-        public FileEntry(string nameHash, string dataHash, string path)
+        public FileEntry(Hash nameHash, Hash dataHash, string path)
         {
             this.NameHash = nameHash;
             this.DataHash = dataHash;

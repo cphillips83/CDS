@@ -52,8 +52,8 @@ namespace CDS.Tasks
                                 var relativePath = files[i].Substring(_directoryProducer.BasePath.Length);
                                 using (var s = File.OpenRead(files[i]))
                                 {
-                                    var nameHash = hasher.Hash(relativePath);
-                                    var dataHash = hasher.Hash(s);
+                                    var nameHash = hasher.ComputeHash(relativePath);
+                                    var dataHash = hasher.ComputeHash(s);
                                     var fe = new FileEntry(nameHash, dataHash, relativePath);
                                     fileEntries[i] = fe;
                                 }

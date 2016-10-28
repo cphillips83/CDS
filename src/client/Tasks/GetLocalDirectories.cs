@@ -51,7 +51,7 @@ namespace CDS.Tasks
             if (!BasePath.EndsWith("\\"))
                 BasePath += "\\";
 
-            Root = new DirectoryEntry(SimpleSHA1.NonThreadSafe.Hash((string)null), string.Empty);
+            Root = new DirectoryEntry(SimpleSHA1.NonThreadSafe.ComputeHash((string)null), string.Empty);
         }
 
         protected override void Execute()
@@ -81,7 +81,7 @@ namespace CDS.Tasks
 
 
                         var relativePath = dirs[i].Substring(BasePath.Length);
-                        var filenameHash = SimpleSHA1.NonThreadSafe.Hash(relativePath);
+                        var filenameHash = SimpleSHA1.NonThreadSafe.ComputeHash(relativePath);
                         dirEntries[i] = new DirectoryEntry(filenameHash, relativePath);
                         if (!dirEntries[i].Path.Contains(".git") && !dirEntries[i].Path.Contains("\\cache\\"))
                             dirsToProcess.Push(dirEntries[i]);
