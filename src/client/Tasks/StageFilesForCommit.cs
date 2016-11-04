@@ -39,11 +39,20 @@ namespace CDS.Tasks
                 return;
             }
 
-            //now we need to get the current manifest
-            //and compare to what we have
-            var d = new GetChangeSet(null, a.Root); //change 2nd a to c
-            d.Process();
-            d.Wait();
+            //client shouldn't send change set to server
+            //instead it should send the manifest file and
+            //the server returns the change set as well as
+            //flagging what files it needs
+
+
+
+            ////now we need to get the current manifest
+            ////and compare to what we have
+            //var d = new GetChangeSet(null, a.Root); //change 2nd a to c
+            //d.Process();
+            //d.Wait();
+
+
 
             sw.Stop();
             Console.WriteLine($"Completed in {sw.Elapsed}...");
